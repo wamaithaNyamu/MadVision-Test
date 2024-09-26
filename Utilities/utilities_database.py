@@ -76,31 +76,27 @@ def insert_data(table, data):
         }, 500
 
 
-
-
 def update_data(table, data, condition):
     try:
-        logger.info(f"The condition is of type {type(condition)} and its {condition['url']} ")
+        logger.info(f"The condition is of type {type(condition)} and its url: {condition['video_id']}")
+
         # Perform the update operation
-        response = supabase.table(table).update(data).eq('url' , condition['url']).execute()
+        response = supabase.table(table).update(data).eq('video_id', condition['video_id']).execute()
         logger.info(f"Here is the update response {response}")
-   
 
         updated_data = response.data  # Response contains updated data
-
-        logger.info(f"Data inserted successfully into {table}: {data}")
+        logger.info(f"Data updated successfully in {table}: {data}")
         return {
             'success': True,
-            'data':data
+            'data': data
         }, 200
-    
 
     except Exception as e:
         logger.error(f"There was an error updating data in {table}. The error is {e}")
         return {
             'success': False,
             'error': str(e)
-        }, 500  # Internal Server Error        
+        }, 500  # Internal Server Error      
 
 
 
@@ -133,7 +129,7 @@ def upload_file(bucket_name, file_path, file_name):
 def check_value_exists_in_column(table, url, column_name):
     try:
         # Query the Supabase database
-        result = supabase.table(table).select(column_name).eq('url', url).execute()
+        result = supabase.table(table).select(column_name).eq('video_id', url).execute()
 
         # Check if any data was returned and the transcription value is not None
         if result.data and result.data[0][column_name] is not None:

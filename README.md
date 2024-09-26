@@ -49,4 +49,8 @@ fastapi dev app.py
 
 Navigate to https://localhost:8000/docs to interact with the API
 
+To copy to gcp 
 
+```shell
+gcloud compute scp . wamaitha@<madvision-vm:/home/wamaitha/MADVISION
+```

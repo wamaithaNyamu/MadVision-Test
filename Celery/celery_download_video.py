@@ -314,8 +314,7 @@ def save_transcription_to_json(transcription, output_json_path):
 def transcribe_with_whisper(video_path, video_id):
     try:
         logger.info("Check if info is in db")
-        is_transcribed = check_value_exists_in_column('videos', f'https://www.youtube.com/watch?v={video_id}', 'transcription')
-        base_url = f"https://www.youtube.com/watch?v="
+        is_transcribed = check_value_exists_in_column('videos', video_id, 'transcription')
 
         # Proceed with transcription only if not already transcribed
         if not is_transcribed[0]['exists']:
@@ -327,7 +326,7 @@ def transcribe_with_whisper(video_path, video_id):
             
             transcription = whisper_model.transcribe(video_path, fp16=False)
             logger.info(f"The transcription was {transcription}")
-            update_data('videos', {"transcription": transcription}, {"url": f"{base_url}{video_id}"})
+            update_data('videos', {"transcription": transcription}, {"video_id": video_id})
         else:
             transcription = is_transcribed[0]['data']
         
@@ -336,20 +335,21 @@ def transcribe_with_whisper(video_path, video_id):
             raise ValueError("The transcription data does not contain a 'text' field.")
         
         logger.info(f"Identifying content type for {video_path}")
-        is_content_type_identified = check_value_exists_in_column('videos', f'{base_url}{video_id}', 'content_type')
+        is_content_type_identified = check_value_exists_in_column('videos', video_id, 'content_type')
         
         if not is_content_type_identified[0]['exists']:
             content_type = identify_content_type(transcription['text'])
-            update_data('videos', {"content_type": content_type}, {"url": f"{base_url}{video_id}"})
+            update_data('videos', {"content_type": content_type}, {"video_id": video_id})
         else:
             content_type = is_content_type_identified[0]['data']
         
         logger.info(f"Identifying insightful clips for {video_path}")
-        is_contentinsightful = check_value_exists_in_column('videos', f'{base_url}{video_id}', 'clips')
+        is_contentinsightful = check_value_exists_in_column('videos', video_id, 'clips')
         
         if not is_contentinsightful[0]['exists']:
             logger.info(f"Finding insightful clips for {video_path}")
             clips = find_insightful_clips(transcription['text'], content_type)
+            update_data('videos', {"clips": clips}, {"video_id": video_id})
         else:
             clips = is_contentinsightful[0]['data']
             
