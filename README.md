@@ -37,7 +37,7 @@
 Let's say you publish longform videos on YouTube and want to break them down into shortform content for other platforms such as TikTok or Instagram Reels. This project implements an event drive architecture that uses, RabbitMQ Celery, OpenAI LLM, whisper, FastAPI and Supabase. RabbitMQ is used as the broker while celery is used as the worker. OpenAI is used as the LLM that helps get insighful clips from the transcription we get back from Whisper. All the information is stored on Supabase.
 </p>
 
-<img src="Media/arch.png" alt="Product Name Screen Shot" width="60%" />
+<img src="Media/arch.png" alt="Product Name Screen Shot" width="100%" />
 
 
 
